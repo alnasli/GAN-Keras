@@ -7,7 +7,18 @@ from keras.optimizers import Adam
 
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
+parser = argparse.ArgumentParser(description='training')
+parser.add_argument('-i', '--epochs', type=int, nargs='?', default=30000,
+                    help='max epoch')
+parser.add_argument('-b', '--batch_size', type=int, nargs='?', default=32,
+                    help='set batch size')
+parser.add_argument('-l', '--latent_dim', type=int, nargs='?', default=100,
+                    help='set latent dim')
+parser.add_argument('--lr', type=float, nargs='?', default=0.0002,
+                    help='set learning rate')
+args = parser.parse_args()
 
 def build_discriminator(img_shape):
     """
@@ -75,8 +86,8 @@ def sample_images(epoch, latent_dim, generator):
                 cnt += 1
         fig.savefig("images_2/%d.png" % epoch)
         plt.close()
-        
-def train(epochs=30000, batch_size=32, sample_interval=1000,latent_dim=100):
+
+def train(epochs=30000, batch_size=32,learning_rate=0.0002,latent_dim=100, sample_interval=1000):
 
     # Load the dataset
     (X_train, _), (_, _) = mnist.load_data()
@@ -92,7 +103,7 @@ def train(epochs=30000, batch_size=32, sample_interval=1000,latent_dim=100):
 
     # Build and compile the discriminator
     discriminator = build_discriminator(img_shape)
-    optimizer = Adam(lr=0.0002)
+    optimizer = Adam(lr=learning_rate)
     discriminator.compile(loss='binary_crossentropy',
                                optimizer=optimizer,
                                metrics=['accuracy'])
@@ -151,3 +162,11 @@ def train(epochs=30000, batch_size=32, sample_interval=1000,latent_dim=100):
         # If at save interval => save generated image samples
         if epoch % sample_interval == 0:
             sample_images(epoch,latent_dim,generator)
+
+if __name__ == '__main__':
+
+    epochs=args.epochs
+    batch_size=args.batch_size
+    latent_dim=args.latent_dim
+    learning_rate=args.lr
+    train(epochs,batch_size,learning_rate,latent_dim)

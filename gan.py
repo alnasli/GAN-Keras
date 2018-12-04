@@ -75,3 +75,79 @@ def sample_images(epoch, latent_dim, generator):
                 cnt += 1
         fig.savefig("images_2/%d.png" % epoch)
         plt.close()
+        
+def train(epochs=30000, batch_size=32, sample_interval=1000,latent_dim=100):
+
+    # Load the dataset
+    (X_train, _), (_, _) = mnist.load_data()
+
+    # Rescale -1 to 1
+    X_train = X_train / 127.5 - 1.
+    X_train = np.expand_dims(X_train, axis=3)
+    img_shape=X_train.shape[1:]
+
+    #make the combined model of gan
+    #input of the combine model
+    noise=Input(shape=(latent_dim,))
+
+    # Build and compile the discriminator
+    discriminator = build_discriminator(img_shape)
+    optimizer = Adam(lr=0.0002)
+    discriminator.compile(loss='binary_crossentropy',
+                               optimizer=optimizer,
+                               metrics=['accuracy'])
+    # Build the generator
+    generator = build_generator(latent_dim,img_shape)
+
+    # For the combined model we will only train the generator
+    discriminator.trainable = False
+
+    # The generator takes noise as input and generates imgs
+    img=generator(noise)
+
+    # The discriminator takes generated images as input and determines validity
+    validity=discriminator(img)
+
+    # The combined model  (stacked generator and discriminator)
+    # Trains the generator to fool the discriminator
+    combined=Model(noise,validity)
+    combined.compile(loss='binary_crossentropy', optimizer=optimizer)
+
+    # Adversarial ground truths
+    valid = np.ones((batch_size, 1))
+    fake = np.zeros((batch_size, 1))
+
+    for epoch in range(epochs):
+        # ---------------------
+        #  Train Discriminator
+        # ---------------------
+
+        # Select a random batch of images
+        idx = np.random.randint(0, X_train.shape[0], batch_size)
+        imgs = X_train[idx]
+
+        noise = np.random.normal(0, 1, (batch_size,latent_dim))
+
+        # Generate a batch of new images
+        gen_imgs = generator.predict(noise)
+
+        # Train the discriminator
+        d_loss_real = discriminator.train_on_batch(imgs, valid)
+        d_loss_fake = discriminator.train_on_batch(gen_imgs, fake)
+        d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+
+        # ---------------------
+        #  Train Generator
+        # ---------------------
+        noise = np.random.normal(0, 1, (batch_size, latent_dim))
+
+        # Train the generator (to have the discriminator label samples as valid)
+        g_loss = combined.train_on_batch(noise, valid)
+
+        # Plot the progress
+        if epoch % 50 == 0:
+            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
+
+        # If at save interval => save generated image samples
+        if epoch % sample_interval == 0:
+            sample_images(epoch,latent_dim,generator)

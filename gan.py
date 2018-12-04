@@ -53,3 +53,25 @@ def build_generator(latent_dim,img_shape):
     generator=Model(noise,img)
     generator.summary()
     return generator
+
+def sample_images(epoch, latent_dim, generator):
+        """
+        Plot some results during the training.
+        """
+
+        r, c = 5, 5
+        noise = np.random.normal(0, 1, (r * c, latent_dim))
+        gen_imgs = generator.predict(noise)
+
+        # Rescale images 0 - 1
+        gen_imgs = 0.5 * gen_imgs + 0.5
+
+        fig, axs = plt.subplots(r, c)
+        cnt = 0
+        for i in range(r):
+            for j in range(c):
+                axs[i, j].imshow(gen_imgs[cnt, :, :, 0], cmap='gray')
+                axs[i, j].axis('off')
+                cnt += 1
+        fig.savefig("images_2/%d.png" % epoch)
+        plt.close()

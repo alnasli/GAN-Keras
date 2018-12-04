@@ -84,7 +84,7 @@ def sample_images(epoch, latent_dim, generator):
                 axs[i, j].imshow(gen_imgs[cnt, :, :, 0], cmap='gray')
                 axs[i, j].axis('off')
                 cnt += 1
-        fig.savefig("images_2/%d.png" % epoch)
+        fig.savefig("images/%d.png" % epoch)
         plt.close()
 
 def train(epochs=30000, batch_size=32,learning_rate=0.0002,latent_dim=100, sample_interval=1000):

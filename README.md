@@ -1,7 +1,10 @@
 # GAN-Keras
-
+A Keras implementation of a simple Generative Adversarial Networks (GAN). GAN was trained on the MNIST dataset.
 
 #### Example
 ```
-$ python3 gan.py --epochs 30000 --lr 0.0002
+$ python gan.py --epochs 30000 --lr 0.0002
 ```
+<p align="center">
+    <img src="images/29000.png" width="640"\>
+</p>

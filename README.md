@@ -6,5 +6,5 @@ A Keras implementation of a simple Generative Adversarial Networks (GAN). GAN wa
 $ python gan.py --epochs 30000 --lr 0.0002
 ```
 <p align="center">
-    <img src="images/29000.png" width="640"\>
+    <img src="https://github.com/alnasli/GAN-Keras/blob/master/mnist_gan.gif" width="640"\>
 </p>

@@ -3,7 +3,7 @@ A Keras implementation of a simple Generative Adversarial Networks (GAN). GAN wa
 
 #### Example
 ```
-$ python gan.py --epochs 30000 --lr 0.0002
+$ python train.py --epochs 30000 --lr 0.0002
 ```
 <p align="center">
     <img src="https://github.com/alnasli/GAN-Keras/blob/master/mnist_gan.gif" width="640"\>

@@ -118,7 +118,7 @@ def train(epochs=30000, batch_size=32,learning_rate=0.0002,latent_dim=100, sampl
 
     generator.save('generator_weights.h5')
     combined.save('combined_weights.h5')
-
+    print("Weights saved")
 if __name__ == '__main__':
     epochs=args.epochs
     batch_size=args.batch_size
